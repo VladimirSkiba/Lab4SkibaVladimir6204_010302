@@ -1,8 +1,11 @@
 package functions;
 
-public class LinkedListTabulatedFunction implements TabulatedFunction{
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
-    private static final double EPSILON = 1e-10;
+public class LinkedListTabulatedFunction implements TabulatedFunction, Externalizable {
 
 
     private static class FunctionNode {
@@ -77,7 +80,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         }
 
         for (int i = 0; i < points.length - 1; i++) {
-            if (points[i].getX() >= points[i + 1].getX() - EPSILON) {
+            if (!MathUtil.less(points[i].getX(), points[i + 1].getX())) {
                 throw new IllegalArgumentException("Точки не упорядочены по X или содержат дубликаты");
             }
         }
@@ -220,13 +223,13 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         double leftBorder = getLeftDomainBorder();
         double rightBorder = getRightDomainBorder();
 
-        if (x < leftBorder - EPSILON || x > rightBorder + EPSILON) {
+        if (MathUtil.less(x, leftBorder) || MathUtil.greater(x, rightBorder)) {
             return Double.NaN;
         }
 
         FunctionNode current = head.next;
         for (int i = 0; i < pointsCount; i++) {
-            if (Math.abs(x - current.point.getX()) < EPSILON) {
+            if (MathUtil.equals(x, current.point.getX())) {
                 return current.point.getY();
             }
             current = current.next;
@@ -237,7 +240,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
             double x1 = current.point.getX();
             double x2 = current.next.point.getX();
 
-            if (x >= x1 - EPSILON && x <= x2 + EPSILON) {
+            if (MathUtil.greaterOrEquals(x, x1) && MathUtil.lessOrEquals(x, x2)) {
                 double y1 = current.point.getY();
                 double y2 = current.next.point.getY();
                 return y1 + (y2 - y1) * (x - x1) / (x2 - x1);
@@ -324,16 +327,49 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         int insertIndex = 0;
         FunctionNode current = head.next;
 
-        while (insertIndex < pointsCount && current.point.getX() < point.getX() - EPSILON) {
+        while (insertIndex < pointsCount && MathUtil.less(current.point.getX(), point.getX())) {
             current = current.next;
             insertIndex++;
         }
 
-        if (insertIndex < pointsCount && Math.abs(current.point.getX() - point.getX()) < EPSILON) {
+        if (insertIndex < pointsCount && MathUtil.equals(current.point.getX(), point.getX())) {
             throw new InappropriateFunctionPointException("Точка с X=" + point.getX() + " уже существует");
         }
 
         FunctionNode newNode = addNodeByIndex(insertIndex);
         newNode.point = new FunctionPoint(point);
+    }
+
+    /**
+     * Custom serialization: write points as array to stream
+     */
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(pointsCount);
+        FunctionNode current = head.next;
+        for (int i = 0; i < pointsCount; i++) {
+            out.writeDouble(current.point.getX());
+            out.writeDouble(current.point.getY());
+            current = current.next;
+        }
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        int count = in.readInt();
+        // rebuild empty list
+        head = new FunctionNode(null);
+        head.prev = head;
+        head.next = head;
+        pointsCount = 0;
+        lastAccessed = head;
+        lastAccessedIndex = -1;
+
+        for (int i = 0; i < count; i++) {
+            double x = in.readDouble();
+            double y = in.readDouble();
+            FunctionNode node = addNodeToTail();
+            node.point = new FunctionPoint(x, y);
+        }
     }
 }

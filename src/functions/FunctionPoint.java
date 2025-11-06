@@ -1,6 +1,10 @@
 package functions;
 
-public class FunctionPoint {
+import java.io.Serializable;
+
+public class FunctionPoint implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private double x, y;
 
     public FunctionPoint(double x, double y){
