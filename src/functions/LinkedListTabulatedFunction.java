@@ -340,9 +340,6 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Externali
         newNode.point = new FunctionPoint(point);
     }
 
-    /**
-     * Custom serialization: write points as array to stream
-     */
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeInt(pointsCount);
@@ -357,7 +354,6 @@ public class LinkedListTabulatedFunction implements TabulatedFunction, Externali
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         int count = in.readInt();
-        // rebuild empty list
         head = new FunctionNode(null);
         head.prev = head;
         head.next = head;

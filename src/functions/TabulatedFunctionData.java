@@ -2,10 +2,6 @@ package functions;
 
 import java.io.Serializable;
 
-/**
- * Serializable container holding tabulated function points.
- * Used to compare default Java Serializable output with Externalizable.
- */
 public class TabulatedFunctionData implements Serializable {
     private static final long serialVersionUID = 1L;
 

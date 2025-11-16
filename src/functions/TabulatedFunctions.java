@@ -31,7 +31,6 @@ public final class TabulatedFunctions {
             }
             dos.flush();
         } finally {
-            // do not close provided stream
         }
     }
 
@@ -58,7 +57,6 @@ public final class TabulatedFunctions {
             pw.println(sb.toString());
             pw.flush();
         } finally {
-            // do not close provided writer
         }
     }
 

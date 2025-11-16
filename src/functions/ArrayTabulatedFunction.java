@@ -66,7 +66,6 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Externalizable
         for (int i = 0; i < pointsCount; i++) {
             this.points[i] = new FunctionPoint(points[i]);
         }
-        // ensure trailing nulls for consistent state
         if (this.pointsCount < this.points.length) {
             Arrays.fill(this.points, this.pointsCount, this.points.length, null);
         }
@@ -209,7 +208,6 @@ public class ArrayTabulatedFunction implements TabulatedFunction, Externalizable
         pointsCount++;
     }
 
-    // Required no-arg constructor for Externalizable
     public ArrayTabulatedFunction() {
     }
 
