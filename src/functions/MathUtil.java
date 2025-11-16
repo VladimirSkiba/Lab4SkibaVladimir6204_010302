@@ -1,27 +1,20 @@
 package functions;
 
 public final class MathUtil {
-    /**
-     * Absolute epsilon for near-zero comparisons. Kept small but not too small to avoid
-     * underflow issues for typical tabulation ranges.
-     */
+
     public static final double EPS = 1e-10;
 
     private MathUtil() {}
 
-    /**
-     * Robust equality check for doubles: combines an absolute tolerance with a
-     * tiny relative tolerance based on magnitude.
-     */
     public static boolean equals(double a, double b) {
         if (Double.isNaN(a) || Double.isNaN(b)) return false;
-        if (a == b) return true; // handles infinities and exact equality
+        if (a == b) return true; 
 
         double diff = Math.abs(a - b);
-        if (diff <= EPS) return true; // absolute tolerance
+        if (diff <= EPS) return true; 
 
         double max = Math.max(Math.abs(a), Math.abs(b));
-        // relative tolerance: allow differences on the order of 1e-12 of the magnitude
+        
         return diff <= Math.max(EPS, max * 1e-12);
     }
 
